@@ -23,7 +23,7 @@ pip install -r requirements.txt
 python main.py download <course ID> <assignment ID> <path/to/destination/folder>
 
 # upload all grades to canvascli
-python main.py upload-submissions <course ID> <assignment ID> <path/to/grades/csv>
+python main.py upload <course ID> <assignment ID> <path/to/grades/csv>
 ```
 
 # CSV Format
