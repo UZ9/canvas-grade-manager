@@ -2,15 +2,28 @@
 
 A utility CLI for automatically uploading grades to Canvas. Primarily used to assist in grading ECE2035: Programming for Hardware/Software Systems.
 
+# Requirements 
+
+- A Canvas account with instructor privileges for a course 
+- Python 3
+
+# Installation
+
+The `requirements.txt` file contains a list of all needed dependencies for this project. You can install them automatically using the following command at the base of the repository:
+
+```
+pip install -r requirements.txt
+```
+
 # Commands 
 
 ```
 # download all submissions into a particular directory
 # files will have the format UserName_UserID_OriginalFileName.OriginalFileExtension
-canvascli download <course ID> <assignment ID> <path/to/destination/folder>
+python main.py download <course ID> <assignment ID> <path/to/destination/folder>
 
 # upload all grades to canvascli
-canvascli upload-submissions <course ID> <assignment ID> <path/to/grades/csv>
+python main.py upload-submissions <course ID> <assignment ID> <path/to/grades/csv>
 ```
 
 # CSV Format
