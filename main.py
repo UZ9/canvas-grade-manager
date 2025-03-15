@@ -2,15 +2,33 @@ import click
 from dotenv import load_dotenv
 import os
 from canvas_manager import CanvasManager
+from autograder import grade_assignments
 
 load_dotenv()
 
 CANVAS_BASE_URL = os.getenv("CANVAS_BASE_URL")
 CANVAS_API_KEY = os.getenv("CANVAS_ACCESS_TOKEN")
 
+def choice(text):
+    print(text, "[Y\\n]")
+
+    input = input().lower()
+
+    if (choice is not None and choice == "") or choice == "y":
+        return True
+
+    return False
+
 @click.group()
 def cli():
     pass
+
+@click.command()
+@click.argument("submission_folder")
+@click.argument("elf_path")
+@click.argument("seeds", nargs=-1)
+def grade(submission_folder, elf_path, seeds):
+    grade_assignments(submission_folder, elf_path, seeds)
 
 @click.command()
 @click.argument("course_id")
@@ -19,9 +37,19 @@ def cli():
 def download(course_id, assignment_id, destination_folder):
     manager = CanvasManager(CANVAS_BASE_URL, CANVAS_API_KEY, course_id)
 
-    manager.download_all_submissions(assignment_id, destination_folder)
-    
-    click.echo("Successfully downloaded all submissions.")
+    course = manager.course
+
+    assignment = course.get_assignment(assignment_id)
+
+    # Confirm course selection 
+    print(f"Confirm: download all submissions for assignment '{assignment.name}' in course '{course.name}' [Y\\n]")
+
+    choice = input().lower()
+
+    if (choice is not None and choice == "") or choice == "y":
+        manager.download_all_submissions(assignment, destination_folder)
+    else:
+        print("Cancelled download")
 
 @click.command()
 @click.argument("course_id")
@@ -36,6 +64,7 @@ def upload(course_id, assignment_id, grades_csv_file):
 
 cli.add_command(download)
 cli.add_command(upload)
+cli.add_command(grade)
 
 if __name__ == "__main__":
     cli()

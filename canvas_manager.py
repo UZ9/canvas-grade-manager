@@ -8,9 +8,7 @@ class CanvasManager:
         self.course = self.canvas.get_course(course_id)
         self.course_id = course_id
 
-    def download_all_submissions(self, assignment_id, target_folder):
-        assignment = self.course.get_assignment(assignment_id)
-
+    def download_all_submissions(self, assignment, target_folder):
         submissions = assignment.get_submissions()
 
         with Progress(
@@ -31,7 +29,7 @@ class CanvasManager:
                 for attachment in submission.attachments:
                     progress.update(task, description=f"[green] Downloading {attachment} from {name}...")
 
-                    attachment.download(os.path.join(target_folder, f"{name.replace(" ", "")}_{submission.user_id}_{attachment}"))
+                    attachment.download(os.path.join(target_folder, f"{name.replace(" ", "").replace("_", "")}_{submission.user_id}_{str(attachment).replace("_", "")}"))
 
 
                 if len(submission.attachments) == 0:
@@ -64,7 +62,8 @@ class CanvasManager:
 
                     submission = assignment.get_submission(user_id)
 
-                    # TODO: add submission logic here
+                    # TODO: add submission logic here; currently left blank
+                    # to not accidentally nuke everyone's grade
 
                     progress.update(task, description=f"[green] Assigning grade {grade.strip()} to {name.strip()}...")
 
@@ -79,4 +78,3 @@ class CanvasManager:
         original_file_name = split[2]
 
         return (name, user_id, original_file_name)
-

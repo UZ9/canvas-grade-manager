@@ -172,3 +172,18 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
+
+# Don't include executable 
+riscvemulator.exe
+
+# Don't include any submission elfs
+*.elf 
+
+# Don't include any grades file 
+*.csv
+
+# Don't include any venv-generated bin
+bin
+
+# Don't include personal todo list
+TODO.md 
