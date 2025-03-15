@@ -23,6 +23,9 @@ class CanvasManager:
 
                 name = user.name
 
+                # names are by default First Name Last Name, reverse this order to Last Name First Name
+                name = " ".join(name.split(" ")[::-1])
+
                 progress.update(task, description=f"[green] Downloading {name}...")
 
                 # each submission has attachments; download and place in folder

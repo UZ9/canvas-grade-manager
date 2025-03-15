@@ -2,7 +2,7 @@ import click
 from dotenv import load_dotenv
 import os
 from canvas_manager import CanvasManager
-from autograder import grade_assignments
+from autograder import grade_assignments, save_class_results
 
 load_dotenv()
 
@@ -28,7 +28,7 @@ def cli():
 @click.argument("elf_path")
 @click.argument("seeds", nargs=-1)
 def grade(submission_folder, elf_path, seeds):
-    grade_assignments(submission_folder, elf_path, seeds)
+    save_class_results(grade_assignments(submission_folder, elf_path, seeds))
 
 @click.command()
 @click.argument("course_id")
