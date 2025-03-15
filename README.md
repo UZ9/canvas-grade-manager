@@ -24,6 +24,9 @@ python main.py download <course ID> <assignment ID> <path/to/destination/folder>
 
 # upload all grades to canvascli
 python main.py upload <course ID> <assignment ID> <path/to/grades/csv>
+
+# autograde assignments; can be any amount of seeds provided
+python main.py grade <path/to/submissions/folder> <path/to/elf/file> <seed-1> <seed-2> <...> <seed-n>
 ```
 
 # CSV Format
@@ -60,6 +63,8 @@ The following need to be set in the `.env` file. A format example is present in 
 CANVAS_BASE_URL = "" # base url for canvas, e.g. https://gatech.instructure.com 
 
 CANVAS_ACCESS_TOKEN = "" # Canvas access token
+
+EMULATOR_PATH="" # Path to riscvemulator executable
 ```
 
 For acquiring a canvas access token, take a look at https://community.canvaslms.com/t5/Canvas-Basics-Guide/How-do-I-manage-API-access-tokens-in-my-user-account/ta-p/615312
