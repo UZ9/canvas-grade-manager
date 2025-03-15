@@ -88,6 +88,12 @@ class CanvasManager:
 
                     submission = assignment.get_submission(user_id)
 
+                    # for all other columns, assign them to rubrics
+                    for rubric_col in cols[2:]:
+                        # TODO: This part can be used for dynamically setting rubric items
+                        print("Found rubric item:", rubric_col)
+
+
                     # TODO: add submission logic here; currently left blank
                     # to not accidentally nuke everyone's grade
 
