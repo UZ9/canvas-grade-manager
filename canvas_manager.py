@@ -1,6 +1,6 @@
 from canvasapi import Canvas
 import os
-from rich.progress import Progress, SpinnerColumn, TextColumn
+from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, MofNCompleteColumn, TimeElapsedColumn, TimeRemainingColumn
 
 class CanvasManager:
     def __init__(self, api_url, api_key, course_id):
@@ -11,12 +11,28 @@ class CanvasManager:
     def download_all_submissions(self, assignment, target_folder):
         submissions = assignment.get_submissions()
 
+        no_submission_users = []
+
+        # first fetch the number of students in the canvas; this unfortunately cannot be done in one request 
+        # as canvas limits the API response to 100 items for any request, requiring pagination 
+        submission_count = 0
+
+        # we can use the submission count to know the current progress of downloading; this is technically 
+        # not needed, but the slight overhead to see the exact progress seems to be woth it
+        for submission in submissions:
+            submission_count += 1
+
         with Progress(
-            SpinnerColumn(),
-            TextColumn("[progress.description]{task.description}"),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            BarColumn(),
+            MofNCompleteColumn(),
+            TextColumn("•"),
+            TimeElapsedColumn(),
+            TextColumn("•"),
+            TimeRemainingColumn(),
             transient=True
         ) as progress:
-            task = progress.add_task("[green] Downloading submissions...")
+            task = progress.add_task("[green] Downloading submissions...", total=submission_count)
 
             for submission in submissions:
                 user = self.course.get_user(submission.user_id)
@@ -30,6 +46,7 @@ class CanvasManager:
 
                 # each submission has attachments; download and place in folder
                 for attachment in submission.attachments:
+                    progress.update(task, advance=1)
                     progress.update(task, description=f"[green] Downloading {attachment} from {name}...")
 
                     attachment.download(os.path.join(target_folder, f"{name.replace(" ", "").replace("_", "")}_{submission.user_id}_{str(attachment).replace("_", "")}"))
@@ -37,8 +54,14 @@ class CanvasManager:
 
                 if len(submission.attachments) == 0:
                     print("No assignments found for", name)
+                    no_submission_users.append(name)
                 else:
                     print("Downloaded", name)
+
+        print("Students with no submission:")
+
+        for student in no_submission_users:
+            print("-", student)
 
     def upload_grades(self, assignment_id, grade_csv):
         assignment = self.course.get_assignment(assignment_id)
