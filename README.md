@@ -34,7 +34,7 @@ python main.py grade <path/to/submissions/folder> <path/to/elf/file> <seed-1> <s
 This parser works off of the following CSV format:
 
 ```
-name,grade
+name,grade,<any extra stats also separated by commas>
 ```
 
 Where `name` consists of the same format as the download:
@@ -48,6 +48,16 @@ Example:
 ```
 BobRoss_192833_SomeFile.asm
 ```
+
+Upon uploading to Canvas, a comment will be automatically generated under the token user's name with a list of all extra statistics found in the CSV, as shown in the following example:
+
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/8efb5583-23b0-4924-9632-f0120e259679" />
+</p>
+
+
+
 
 # Setup 
 
