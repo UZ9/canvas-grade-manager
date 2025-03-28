@@ -12,7 +12,7 @@ CANVAS_API_KEY = os.getenv("CANVAS_ACCESS_TOKEN")
 def choice(text):
     print(text, "[Y\\n]")
 
-    input = input().lower()
+    choice = input().lower()
 
     if (choice is not None and choice == "") or choice == "y":
         return True
@@ -42,11 +42,7 @@ def download(course_id, assignment_id, destination_folder):
     assignment = course.get_assignment(assignment_id)
 
     # Confirm course selection 
-    print(f"Confirm: download all submissions for assignment '{assignment.name}' in course '{course.name}' [Y\\n]")
-
-    choice = input().lower()
-
-    if (choice is not None and choice == "") or choice == "y":
+    if choice(f"Confirm: download all submissions for assignment '{assignment.name}' in course '{course.name}'"):
         manager.download_all_submissions(assignment, destination_folder)
     else:
         print("Cancelled download")
@@ -58,9 +54,16 @@ def download(course_id, assignment_id, destination_folder):
 def upload(course_id, assignment_id, grades_csv_file):
     manager = CanvasManager(CANVAS_BASE_URL, CANVAS_API_KEY, course_id)
 
-    manager.upload_grades(assignment_id, grades_csv_file)
-    
-    click.echo("Successfully uploaded all submissions.")
+    course = manager.course
+
+    assignment = course.get_assignment(assignment_id)
+
+    # Confirm course selection 
+    if choice(f"Confirm: upload all submissions for assignment '{assignment.name}' in course '{course.name}'"):
+        manager.upload_grades(assignment_id, grades_csv_file)
+        click.echo("Successfully uploaded all submissions.")
+    else:
+        print("Cancelled upload")
 
 cli.add_command(download)
 cli.add_command(upload)

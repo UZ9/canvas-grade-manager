@@ -75,11 +75,12 @@ class CanvasManager:
             task = progress.add_task("[green] Downloading submissions...")
 
             with open(grade_csv) as grade_file:
+                col_names = next(grade_file).split(",")
+
                 for line in grade_file:
                     cols = line.split(",")
 
-                    file_name = cols[0]
-                    grade = cols[1]
+                    (file_name, grade, di, si, regs, mem, had_errors) = cols
 
                     (name, user_id, _) = self.parse_downloaded_name(file_name)
 
@@ -89,15 +90,32 @@ class CanvasManager:
                     submission = assignment.get_submission(user_id)
 
                     # for all other columns, assign them to rubrics
-                    for rubric_col in cols[2:]:
+
+                    
+                    comment = "Statistics:\n\n"
+
+                    for i in range(2, len(cols)):
+                        if self.is_float(cols[i]):
+                            val = round(float(cols[i]), 2)
+                        else:
+                            val = cols[i].strip()
+
                         # TODO: This part can be used for dynamically setting rubric items
-                        print("Found rubric item:", rubric_col)
+                        comment += f"{col_names[i].strip()}: {val}\n"
 
 
                     # TODO: add submission logic here; currently left blank
                     # to not accidentally nuke everyone's grade
 
                     progress.update(task, description=f"[green] Assigning grade {grade.strip()} to {name.strip()}...")
+
+                    # assuming score is out of 100 from autograder; canvas grade isn't necessarily
+                    # out of 70, so we use a percentage instead
+                    submission.edit(submission={'posted_grade': grade.strip() + "%"},comment={'text_comment': comment})
+
+                    
+
+                    
 
     def parse_downloaded_name(self, file_name):
         split = file_name.split("_")
@@ -110,3 +128,10 @@ class CanvasManager:
         original_file_name = split[2]
 
         return (name, user_id, original_file_name)
+
+    def is_float(self, num):
+        try: 
+            float(num)
+            return True
+        except ValueError:
+            return False
